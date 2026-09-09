@@ -1,0 +1,14 @@
+# Tema harus cocok dengan palet di app.py (BG / PANEL / TEXT / ACCENT) supaya
+# widget bawaan Streamlit menyatu dengan CSS kustom.
+[theme]
+base = "dark"
+primaryColor = "#F5B942"
+backgroundColor = "#0E1113"
+secondaryBackgroundColor = "#14181A"
+textColor = "#E5EAE8"
+
+[server]
+maxUploadSize = 10
+
+[browser]
+gatherUsageStats = false

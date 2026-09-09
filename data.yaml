@@ -1,0 +1,32 @@
+path: /kaggle/working/dataset
+train: train/images
+val: valid/images
+test: test/images
+nc: 26
+names:
+  0: Bench
+  1: Bicycle
+  2: Branch
+  3: Bus
+  4: Bushes
+  5: Car
+  6: Crosswalk
+  7: Door
+  8: Elevator
+  9: Fire Hydrant
+  10: Green Light
+  11: Gun
+  12: Motorcycle
+  13: Person
+  14: Pothole
+  15: Rat
+  16: Red Light
+  17: Scooter
+  18: Stairs
+  19: Stop Sign
+  20: Traffic Cone
+  21: Train
+  22: Tree
+  23: Truck
+  24: Umbrella
+  25: Yellow Light
