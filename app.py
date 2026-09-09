@@ -628,13 +628,14 @@ with left:
     st.markdown(f'<div class="classes">{chips}</div>', unsafe_allow_html=True)
     st.markdown(
         f"""
-        <div class="note">Model only trained on <b>{len(catalog)} classes above</b>.
-        Objects outside this list are generally <b>not detected</b> — and if detected,
-        likely <b>misclassified</b> into similar-shaped classes, e.g., van as Truck or pole as Branch.</div>
-        <div class="note">All training images are <b>{TRAIN_RES} pixels</b>. In high-resolution photos,
-        small or distant objects — traffic lights, traffic cones,
-        fire hydrant — are often missed because their scale differs greatly from training data.
-        Lowering the confidence threshold may help, at the cost of more false detections.</div>
+        <div class="note">The model was trained on <b>only the {len(catalog)} classes above</b>.
+        Anything outside that list generally goes <b>undetected</b> — and when it is detected, it is
+        usually <b>misclassified</b> as the nearest similar-looking class: a van reads as Truck,
+        a lamp post as Branch.</div>
+        <div class="note">Every training image was <b>{TRAIN_RES} pixels</b>. In high-resolution photos,
+        small or distant objects — traffic lights, traffic cones, fire hydrants — are often missed,
+        because their scale differs so much from the training data. Lowering the confidence
+        threshold recovers some of them, at the cost of more false positives.</div>
         """,
         unsafe_allow_html=True,
     )
@@ -710,7 +711,7 @@ with right:
             st.markdown(rows, unsafe_allow_html=True)
 
             st.markdown('<div class="gap"></div>', unsafe_allow_html=True)
-            with st.expander(f"Details {len(dets)} detections"):
+            with st.expander(f"Detection details ({len(dets)})"):
                 detail = "".join(
                     '<div class="det">'
                     f'<span class="i">{i:02d}</span>'
