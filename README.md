@@ -165,14 +165,32 @@ torchvision==0.23.0+cpu
 
 Without it, pip resolves the CUDA build of torch and drags in roughly 2 GB of NVIDIA libraries.
 Streamlit Community Cloud has no GPU, so none of it is used — it only slows the build down and
-risks tripping the free tier's storage limit. `opencv-python-headless` is pinned instead of
-`opencv-python` because the Streamlit Cloud container has no `libGL`.
+risks tripping the free tier's storage limit.
+
+### Why `packages.txt` exists
+
+```
+libgl1
+libglib2.0-0
+```
+
+`ultralytics` declares `opencv-python>=4.6.0` as a hard dependency, so the regular (non-headless)
+OpenCV build is always installed — listing `opencv-python-headless` in `requirements.txt` does
+*not* displace it. Both distributions write into the same `cv2/` directory, and whichever lands
+last wins, so the headless swap that works on some deploys is really just resolver luck.
+
+Regular OpenCV needs `libGL.so.1`, which the Streamlit Cloud container does not ship. `packages.txt`
+is installed with apt before the Python dependencies and supplies it, which fixes the import
+deterministically instead of hoping the right OpenCV wins. `opencv-python` is also version-pinned,
+because left unpinned the resolver picks up OpenCV 5.x — released after `ultralytics 8.4.67` and
+not validated against it.
 
 ## Project structure
 
 ```
 app.py                   # the whole app: UI, inference, and the overlay renderer
 requirements.txt         # pinned dependencies, CPU-only torch
+packages.txt             # apt packages for Streamlit Cloud (libGL for OpenCV)
 README.md
 .streamlit/config.toml   # theme colours — keep in sync with the palette in app.py
 models/best.pt           # fine-tuned YOLO11 checkpoint (~19 MB)
