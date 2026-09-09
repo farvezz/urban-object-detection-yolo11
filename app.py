@@ -13,6 +13,7 @@ Jalankan lokal:
 
 from __future__ import annotations
 
+import csv
 import hashlib
 import io
 import time
@@ -28,6 +29,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageOps
 APP_DIR = Path(__file__).resolve().parent
 MODEL_PATH = APP_DIR / "models" / "best.pt"
 SAMPLES_DIR = APP_DIR / "sample_images"
+METRICS_PATH = APP_DIR / "metrics" / "metrics_summary.csv"
 
 SAMPLES = {
     "1. Car in the street": "sample_01_mobil.jpg",
@@ -363,6 +365,29 @@ def class_catalog() -> dict[int, str]:
     return {int(i): names[i] for i in sorted(names)}
 
 
+@st.cache_data(show_spinner=False)
+def headline_metrics() -> dict[str, dict[str, float]]:
+    """Baca angka evaluasi dari metrics/metrics_summary.csv.
+
+    Angkanya sengaja tidak ditulis ulang di kode: README, isi repo, dan
+    tampilan aplikasi membaca sumber yang sama sehingga tidak bisa melenceng.
+    Kalau berkasnya tidak ada, aplikasi tetap jalan tanpa baris metrik.
+    """
+    if not METRICS_PATH.exists():
+        return {}
+    parsed: dict[str, dict[str, float]] = {}
+    with METRICS_PATH.open(newline="", encoding="utf-8") as handle:
+        for row in csv.DictReader(handle):
+            try:
+                parsed[row["metric"]] = {
+                    "valid": float(row["valid"]),
+                    "test": float(row["test"]),
+                }
+            except (KeyError, TypeError, ValueError):
+                continue  # lewati baris yang tidak berbentuk angka
+    return parsed
+
+
 # ---------------------------------------------------------------------------
 # Penggambaran overlay deteksi
 # ---------------------------------------------------------------------------
@@ -523,12 +548,22 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+metrics = headline_metrics()
+primary = metrics.get("mAP@0.5:0.95 (primary)")
+map_spec = (
+    f'<div class="spec"><span class="k">Test mAP@0.5:0.95</span>'
+    f'<span class="v">{primary["test"]:.3f}</span></div>'
+    if primary
+    else ""
+)
+
 st.markdown(
     f"""
     <div class="specbar">
         <div class="spec"><span class="k">Architecture</span><span class="v">YOLO11</span></div>
         <div class="spec"><span class="k">Number of classes</span><span class="v">{len(catalog)}</span></div>
         <div class="spec"><span class="k">Training resolution</span><span class="v">{TRAIN_RES}</span></div>
+        {map_spec}
         <div class="spec"><span class="k">Device</span><span class="v">CPU</span></div>
         <div class="spec"><span class="k">Weight</span><span class="v">best.pt</span></div>
     </div>

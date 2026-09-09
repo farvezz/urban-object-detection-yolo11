@@ -1,0 +1,7 @@
+metric,valid,test
+mAP@0.5:0.95 (primary),0.4661,0.5102
+mAP@0.5,0.6503,0.6964
+mAP@0.75,0.5016,0.5576
+precision @conf=0.25,0.7803,0.816
+recall @conf=0.25,0.6502,0.7156
+inference ms/image,11.4102,12.7837
