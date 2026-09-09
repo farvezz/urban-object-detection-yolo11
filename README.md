@@ -150,7 +150,10 @@ The app opens at `http://localhost:8501`. There is no build step and no training
    100 MB file limit, so commit it directly — **no Git LFS**.
 2. Go to [share.streamlit.io](https://share.streamlit.io) → **Create app** → pick this repo, and set
    **Main file path** to `app.py`.
-3. The first build takes a few minutes, since it installs torch and ultralytics.
+3. Under **Advanced settings**, set the Python version to **3.12**. The pinned wheels are the ones
+   verified against 3.12; leaving it on a different interpreter risks `torch==2.8.0+cpu` failing to
+   resolve at build time.
+4. The first build takes a few minutes, since it installs torch and ultralytics.
 
 ### Why the `--extra-index-url` line in `requirements.txt` must stay
 
